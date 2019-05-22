@@ -6,7 +6,7 @@
  */
 #include <iostream>
 #include <cstring>
-#include <stdlib.h>
+#include <cstdlib>
 #include <list>
 using namespace std;
 
