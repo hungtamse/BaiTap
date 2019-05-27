@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : bt3.cpp
+// Name        : CheckStudentAttendance.cpp
 // Author      : 
 // Version     :
 // Copyright   : Your copyright notice
@@ -16,21 +16,21 @@ int x1=1,y1;
 
 //==================================================================
 //bai tap 1
-void bt1(){
+void AddOdd(){
     int temp[20];
-    int z, k = 0, dem=1, count=0;
+    int z, k = 0, CountNum=1, count=0;
     cout << "INPUT N: " << endl;
     cin >> k;
-    if(k>=0 && k<=40000000000){
+    if(k>=0 && k<=4000000000){
         z=k;
         while(k>=10){
             k/=10;
-            dem+=1;
+            CountNum+=1;
         }
-        for(int i=1; i<dem; i++){
+        for(int i=1; i<CountNum; i++){
             x1*=10;
         }
-        for(int i=0; i<dem; i++){
+        for(int i=0; i<CountNum; i++){
             y1= z/x1;
             temp[i]=y1;
             z=z%x1;
@@ -47,79 +47,70 @@ void bt1(){
 }
 
 //=====================================================================
-//bt2
+//WordSwap
 
 
-void bt2(){
-    string change;
-    char chuoi[4][10];
-    int count1=0, x2=0, y2=0, z2=0, t=0,count=0;
+void WordSwap(){
+    string StringInput;
+    int count1=0,j=0, n=0;
     cout<<"please input the word to convert"<<endl;
-    getline(cin,change);
-    for(int i=0; i<change.size(); i++){
-        if(change[i]==' '){
+    getline(cin,StringInput);
+    for(int i=0; i<StringInput.size(); i++){
+        if(StringInput[i]==' '){
             count1+=1;
         }
     }
-    if(count1==3){
-        cout <<"Not Convert: "<<change<<endl;
-        for(int i=0; i<change.size(); i++){
-            if(change[i]==' '){
-                count+=1;
-            }
-            if(count==0){
-                chuoi[0][x2]=change[i];
-                x2++;
-            }
-            if(count==1){
-                chuoi[0][x2]='\0';
-                chuoi[1][y2]=change[i];
-                y2++;
-            }
-            if(count==2){
-                chuoi[1][y2]='\0';
-                chuoi[2][z2]=change[i];
-                z2++;
-            }
-            if(count==3){
-                chuoi[2][z2]='\0';
-                chuoi[3][t]=change[i];
-                t++;
+    if(count1>=3){
+        char ArrayTemp[count1][10];
+        for(int i=0; i<StringInput.size(); i++){
+            ArrayTemp[j][n]=StringInput[i];
+            n++;
+            if(StringInput[i]==' '){
+                ArrayTemp[j][n]='\0';
+                j++;
+                n=0;
             }
         }
-        chuoi[3][t]='\0';
-        cout<<"Convert completed: ";
-        cout<<chuoi[0];
-        cout<<chuoi[2];
-        cout<<chuoi[1];
-        cout<<chuoi[3];
+        ArrayTemp[j][n]='\0';
+        for(int i=0; i<=count1; i++){
+            if(i==1){
+                cout << ArrayTemp[count1-1] << " ";
+            }
+            if(i==count1-1){
+                cout<<ArrayTemp[1]<<" ";
+            }
+            else{
+                cout<<ArrayTemp[i]<<" ";
+            }
+        }
     }
-    else
-        cout<<"Error, please input 4 word!";
+    else{
+        cout<<"Please input more than 4 word!"<<endl;
+    }
+
 }
 
 //=======================================================================
 //bt 3
-void bt3(){
-    int q=0;
+void CheckStudentAttendance(){
     cout << "INPUT N: " << endl;
     cin>>n;
     if(n>=1 && n<=100){
-        int chuoi[n];
+        int ArrayTemp[n];
         for(int i=1; i<=n; i++){
             cout<<i<<" ";
-            chuoi[i]=300;
+            ArrayTemp[i]=300;
         }
         cout<<endl;
         cout << "CHECK START: "<<endl;
         for(int j=1; j<=n; j++){
             cin>>x;
             cin.get();
-            chuoi[x]=1;
+            ArrayTemp[x]=1;
         }
         cout<<"Absent: ";
         for(y=1; y<=n; y++){
-            if(chuoi[y]==300){
+            if(ArrayTemp[y]==300){
                 cout<< y<<" ";
             }
         }
@@ -132,22 +123,22 @@ void bt3(){
 void choice(){
     cout<<"1 Sum Odd"<<endl;
     cout<<"2 Word Swap"<<endl;
-    cout<<"3 Check Student Acttendance"<<endl;
+    cout<<"3 Check Student Attendance"<<endl;
     cin>>u;
     cin.get();
     switch(u){
         case 1:
-            bt1();
+            AddOdd();
             cout<<""<<endl;
             cout<<"====================="<<endl;
             break;
         case 2:
-            bt2();
+            WordSwap();
             cout<<""<<endl;
             cout<<"====================="<<endl;
             break;
         case 3:
-            bt3();
+            CheckStudentAttendance();
             cout<<""<<endl;
             cout<<"====================="<<endl;
             break;
@@ -168,9 +159,9 @@ int main() {
         choice();
         cout<<"Do you want to continue(0 is no, 1 is yes):";
         cin>>c;
-        if(c==0)
+        if(c==0){
             check=false;
+        }
     }
     return 0;
 }
-
