@@ -120,7 +120,7 @@ void CheckStudentAttendance(){
 }
 
 
-void choice(){
+void Choice(){
     cout<<"1 Sum Odd"<<endl;
     cout<<"2 Word Swap"<<endl;
     cout<<"3 Check Student Attendance"<<endl;
@@ -153,14 +153,14 @@ void choice(){
 
 //===========================================
 int main() {
-    bool check= true;
+    bool Check= true;
     int c=0;
-    while(check){
-        choice();
+    while(Check){
+        Choice();
         cout<<"Do you want to continue(0 is no, 1 is yes):";
         cin>>c;
         if(c==0){
-            check=false;
+            Check=false;
         }
     }
     return 0;
