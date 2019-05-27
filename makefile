@@ -44,7 +44,7 @@ all: bt3
 bt3: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross G++ Linker'
-	g++  -o "bt3" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ bt3.cpp -o "bt3" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
