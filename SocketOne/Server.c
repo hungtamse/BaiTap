@@ -3,6 +3,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <malloc.h>
+
 int main(){
     int valueOFSocket;
     int valueOfBind;
@@ -11,11 +13,12 @@ int main(){
     int valueOfShutdown;
     struct sockaddr_in address, remoteAddr;
     socklen_t remoteAddr_len;
-    int q=1;
 
     valueOFSocket=socket(AF_INET, SOCK_STREAM, 0);
-    if(valueOFSocket<0)
+    if(valueOFSocket<0){
         printf("Error create server");
+        return -1;
+    }
     else
         printf("Create server successful\n");
 
@@ -27,14 +30,19 @@ int main(){
     valueOfBind=bind(valueOFSocket,(struct sockaddr*)&address, sizeof(address));
     if(valueOfBind==0)
         printf("Bind is successful\n");
-    else
+    else{
         printf("Error bind");
+        CLOSE:
+            free(&address);
+            return -1;
+    }
 
-    valueOfListen=listen(valueOFSocket, 2);
+    valueOfListen=listen(valueOFSocket, 1);
     if(valueOfListen==0)
         printf("Listening...");
-    else
-        printf("false");
+    else{
+        goto CLOSE;
+    }
 
     valueOfAccept=accept(valueOFSocket, (struct sockaddr*)&remoteAddr, &remoteAddr_len);
     if(valueOfAccept>0){
@@ -42,19 +50,22 @@ int main(){
         printf("%s ", inet_ntoa(remoteAddr.sin_addr));
     }
     else
-        printf("false");
+        goto CLOSE;
     while(1){
         char buf[1024];
+        memset(buf, '\0', sizeof(buf));
         recv(valueOfAccept, buf, sizeof(buf), 0);
-        printf("%s\n",buf);
+        puts(buf);
         printf("from ip: %s \n", inet_ntoa(remoteAddr.sin_addr));
+        if(strcmp("EXIT",buf)==0)
+            break;
     }
 
     valueOfShutdown=shutdown(valueOFSocket, SHUT_RDWR);
     if(valueOfShutdown==0)
         printf("Shutdown successful");
     else
-        printf("Shutdown false");
+        goto CLOSE;
 
     return 0;
 }
