@@ -4,15 +4,51 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <arpa/inet.h>
-#define PORT 8181
+#include <pthread.h>
 
+#define PORT 8181
+int sock = 0;
+
+
+//================================================================
+// threading send to server 
+void *SendMessage() {
+    while (1) {
+        char Message[2000];
+        printf("%s","> ");
+        gets(Message);
+        fflush(stdin);
+        if (send(sock, Message, strlen(Message), 0) < 0) {
+            puts("Send failed");
+            close(sock);    
+        }
+    }
+}
+
+
+
+//================================================================
+// threading recived from server
+void *ReceiveMessage() {
+    while (1) {
+        char ServerReply[2000];
+        if (recv(sock, ServerReply, sizeof(ServerReply), 0) < 0) {
+            puts("Recived failed");
+        close(sock);    
+        }
+        puts(ServerReply);
+    }
+}
+
+
+
+//===========================================================
 int main()
 {
-    int sock = 0;
+
     struct sockaddr_in serv_addr;
-    char *StrInput;
-    char add[225]="192.168.81.11";
-    int Continue = 1;
+    pthread_t send_thread, receive_thread;
+    char IpAddress[225]="192.168.81.11";
     memset(&serv_addr, '0', sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(PORT);
@@ -22,7 +58,7 @@ int main()
         close(sock);
         return -1;
     }
-    if(inet_pton(AF_INET, add, &serv_addr.sin_addr) <= 0)
+    if(inet_pton(AF_INET, IpAddress, &serv_addr.sin_addr) <= 0)
     {
         printf("\nInvalid address/ Address not supported \n");
         close(sock);
@@ -30,24 +66,14 @@ int main()
     }
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        printf("\nConnection Failed \n");
-        close(sock);
-        return -1;
+       printf("\nConnection Failed \n");
+       close(sock);
+       return -1;
     }
-    while(Continue == 1){
-        char StrTemp[225];
-        printf("Please input messenger to sent server\n");
-        gets(StrTemp);
-        fflush(stdin);
-        StrInput = &StrTemp;
-        send(sock , StrInput , strlen(StrInput) , 0 );
-        if (strcmp(StrTemp, "bye") == 0)
-        {
-            Continue = 0;
-        }
-        fflush(stdin);
-
-    }
+    pthread_create(&send_thread, NULL, SendMessage, NULL);
+    pthread_create(&receive_thread, NULL, ReceiveMessage, NULL);
+    pthread_join(receive_thread, NULL);
+    pthread_join(send_thread, NULL);
     close(sock);
     return 0;
 }
