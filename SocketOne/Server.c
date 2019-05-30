@@ -8,23 +8,22 @@
 
 struct sockaddr_in remoteAddr;
 int valueOfAccept;
-int valueOfShutdown;
-int checkDistConnect=0;
 
-void *recieve_from_client(void* ptr){
+void *RecieveFromClient(void* ptr){
     while(1){
         char string[1024];
         memset(&string, '\0', sizeof(string));
         recv(valueOfAccept, string, sizeof(string), 0);
         puts(string);
-        printf("from ip: %s \n", inet_ntoa(remoteAddr.sin_addr));
+        printf("%s ",inet_ntoa(remoteAddr.sin_addr));
+        printf("\n");
         if(strcmp(string,"EXIT")==0)
             break;
         memset(&string, '\0', sizeof(string));
     }
 }
 
-void *send_to_client(void* ptr){
+void *SendToClient(void* ptr){
     while(1){
         char string[1024];
         memset(&string, '\0', sizeof(string));
@@ -40,13 +39,12 @@ int main(){
     int valueOFSocket;
     int valueOfBind;
     int valueOfListen;
+    int valueOfShutdown;
     struct sockaddr_in address;
     socklen_t remoteAddr_len;
 
     pthread_t recieveClient;
     pthread_t sendClient;
-    int valueOfRecieveClient;
-    int valueOfSendClient;
 
     valueOFSocket=socket(AF_INET, SOCK_STREAM, 0);
     if(valueOFSocket<0){
@@ -56,7 +54,8 @@ int main(){
     else
         printf("Create server successful\n");
 
-    memset(&address, '0', sizeof(address));
+    memset(&address, '\0', sizeof(address));
+    memset(&remoteAddr, '\0', sizeof(remoteAddr));
 
     address.sin_port=htons(8181);
     address.sin_family=AF_INET;
@@ -66,36 +65,36 @@ int main(){
         printf("Bind is successful\n");
     else{
         printf("Error bind");
-        CLOSE:
-            free(&address);
-            return -1;
+        goto CLOSE;
     }
 
-    valueOfListen=listen(valueOFSocket, 1);
+    valueOfListen=listen(valueOFSocket, 10);
     if(valueOfListen==0)
         printf("Listening...");
     else{
         goto CLOSE;
     }
-
+    remoteAddr_len=sizeof(remoteAddr);
     valueOfAccept=accept(valueOFSocket, (struct sockaddr*)&remoteAddr, &remoteAddr_len);
     if(valueOfAccept>0){
-        printf("accept successful !");
-        printf("%s ", inet_ntoa(remoteAddr.sin_addr));
+        printf("accept successful !\n");
+//        printf("%d \n",remoteAddr.sin_addr);
     }
     else
         goto CLOSE;
-    
-    valueOfRecieveClient=pthread_create(&recieveClient, NULL, recieve_from_client, NULL);
-    valueOfSendClient=pthread_create(&sendClient, NULL, send_to_client, NULL);
+
+    pthread_create(&recieveClient, NULL, RecieveFromClient, NULL);
+    pthread_create(&sendClient, NULL, SendToClient, NULL);
     pthread_join(recieveClient, NULL);
     pthread_join(sendClient, NULL);
-    
+
     valueOfShutdown=shutdown(valueOFSocket, SHUT_RDWR);
     if(valueOfShutdown==0)
         printf("Shutdown successful");
     else
-        goto CLOSE;
+        CLOSE:
+            close(valueOFSocket);
+            return -1;
 
     return 0;
 }
