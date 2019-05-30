@@ -16,13 +16,11 @@ void *recieve_from_client(void* ptr){
         char string[1024];
         memset(&string, '\0', sizeof(string));
         recv(valueOfAccept, string, sizeof(string), 0);
-        if(valueOfAccept<0)
-            checkDistConnect=1;
         puts(string);
         printf("from ip: %s \n", inet_ntoa(remoteAddr.sin_addr));
-        memset(&string, '\0', sizeof(string));
-        if(checkDistConnect!=0)
+        if(strcmp(string,"EXIT")==0)
             break;
+        memset(&string, '\0', sizeof(string));
     }
 }
 
@@ -32,11 +30,9 @@ void *send_to_client(void* ptr){
         memset(&string, '\0', sizeof(string));
         gets(string);
         send(valueOfAccept, string, sizeof(string), 0);
-        if(valueOfAccept<0)
-            checkDistConnect=1;
-        memset(&string, '\0', sizeof(string));
-        if(checkDistConnect!=0)
+        if(strcmp(string,"EXIT")==0)
             break;
+        memset(&string, '\0', sizeof(string));
     }
 }
 
