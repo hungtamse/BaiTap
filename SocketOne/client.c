@@ -27,9 +27,6 @@ void *SendMessage() {
 
 }
 
-
-
-
 //================================================================
 // threading recived from server
 void *ReceiveMessage() {
@@ -45,7 +42,6 @@ void *ReceiveMessage() {
 
 
 
-
 //===========================================================
 int main()
 {
@@ -55,7 +51,7 @@ int main()
     memset(&serv_addr, '0', sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(PORT);
-    inet_aton("192.168.81.12", &serv_addr.sin_addr.s_addr);
+    inet_aton("192.168.81.11", &serv_addr.sin_addr.s_addr);
 
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
